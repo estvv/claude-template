@@ -59,9 +59,17 @@ Common mistakes to avoid:
    - a multi-step procedure triggered on demand → skill
    - delegable work in an isolated context → subagent
    Don't bloat `CLAUDE.md` with what fits in the first two.
-5. Tighten the `paths:` of the generic rules shipped by the template
-   (`tests.md`, `code-quality.md`) onto the actual layout and stack —
-   their globs are intentionally broad at the start.
+5. The template ships **only** `git.md`, deliberately: a generic rule on
+   tests or code style encodes framework knowledge Claude already has,
+   and would be dead weight in every derived project. Rules beyond
+   `git.md` are derived here, from this repo:
+   - from the scan and targeted reads — an actually enforced convention,
+     a repeated pattern, a recurring mistake in the git history;
+   - by **asking the user** what a generic scan cannot know: which areas
+     are fragile, which mistake keeps coming back in review, which rule
+     is applied without being written down anywhere.
+   Never propose a rule that merely restates a language or framework
+   best practice — that's a weak signal (see signal-catalog.md).
 6. Present the list sorted by score to the user — skill candidates,
    rule candidates, subagent candidates, and refactor candidates (not
    skills) in separate sections
