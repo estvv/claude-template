@@ -12,8 +12,6 @@ description: >
 
 # Bootstrap Project
 
-> Origine : template.
-
 Deux phases, strictement séparées. La phase 1 est fiable et peut tourner
 seule. La phase 2 ne fait QUE des propositions — rien n'est créé sans
 validation explicite de l'utilisateur.
@@ -68,22 +66,22 @@ Erreurs à éviter (fréquentes) :
    skill, candidats règle, candidats subagent, et candidats-refactor (pas
    des skills) dans des sections séparées
 7. Pour chaque candidat validé par l'utilisateur : créer le fichier dans
-   `.claude/skills/<nom>/SKILL.md`, `.claude/rules/<sujet>.md` ou
-   `.claude/agents/<nom>.md` selon le type. **Un seul niveau de dossier
-   sous `skills/`** — Claude Code ne découvre que
-   `.claude/skills/<nom>/SKILL.md`, une skill imbriquée plus profond est
-   silencieusement ignorée.
-8. Ajouter la ligne `> Origine : projet.` juste sous le titre du SKILL.md
-   créé, pour la distinguer des skills fournies par le template
-   (`> Origine : template.`), qui ne doivent jamais être écrasées
-9. Ne rien créer pour les candidats non validés
+   `.claude/skills/project-<nom>/SKILL.md`, `.claude/rules/<sujet>.md` ou
+   `.claude/agents/<nom>.md` selon le type. Deux contraintes sur les
+   skills :
+   - **préfixe `project-` obligatoire** — il rend visible dans un `ls` ce
+     qui est propre au repo, par opposition au socle du template qui n'en
+     porte pas (cf. ADR-0001) ;
+   - **un seul niveau de dossier sous `skills/`** — Claude Code ne découvre
+     que `.claude/skills/<nom>/SKILL.md`, une skill imbriquée plus profond
+     est silencieusement ignorée.
+8. Ne rien créer pour les candidats non validés
 
 ## Ce que ce skill ne fait jamais
 
 - Créer un fichier de skill/agent sans validation explicite
-- Modifier une skill marquée `> Origine : template.` — cette zone est un
-  contrat commun à tous les projets. Pour la spécialiser, créer une
-  nouvelle skill projet à côté.
+- Modifier une skill **sans** préfixe `project-` — c'est le socle commun à
+  tous les projets. Pour la spécialiser, créer une `project-<nom>` à côté.
 - Écraser des instructions déjà présentes dans CLAUDE.md
 - Proposer une skill sur un pattern vu une seule fois (voir signaux
   faibles dans signal-catalog.md)

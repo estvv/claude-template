@@ -94,9 +94,9 @@ Un ADR ne se réédite pas : un nouvel ADR le remplace. Voir `writing-adrs`.
 - Les skills vivent dans `.claude/skills/<nom>/SKILL.md`, **un seul niveau
   de dossier**. Une skill imbriquée plus profond est silencieusement
   ignorée par Claude Code.
-- Une skill marquée `> Origine : template.` est un contrat commun à tous
-  les projets : ne pas la modifier. Pour la spécialiser, créer une skill
-  projet à côté, marquée `> Origine : projet.`
+- Les skills propres à ce projet s'appellent `project-<nom>`. Celles **sans
+  préfixe** sont le socle commun à tous les projets : ne pas les modifier —
+  pour spécialiser, créer une `project-<nom>` à côté.
 - Ne pas créer de skill sur un pattern vu une seule fois. Les critères sont
   dans `.claude/skills/bootstrap-project/references/signal-catalog.md`.
 

@@ -12,8 +12,6 @@ description: >
 
 # Writing ADRs
 
-> Origine : template.
-
 ## Quand déclencher
 
 - Une discussion vient d'aboutir à un choix technique engageant (techno,

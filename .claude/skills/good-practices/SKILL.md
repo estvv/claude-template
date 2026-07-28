@@ -11,8 +11,6 @@ license: MIT
 
 # Good practices
 
-> Origine : template.
-
 Garde-fous sur les erreurs récurrentes des LLM qui codent.
 
 **Compromis assumé :** ces règles privilégient la prudence sur la vitesse.
