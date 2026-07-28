@@ -84,7 +84,8 @@ paths: ["src/api/**/*.ts"]
 ```
 
 A rule **without** `paths:` is loaded at every session — same cost as
-`CLAUDE.md`, so reserve it for what applies everywhere (see `git.md`).
+`CLAUDE.md`, so reserve it for what applies everywhere (see `git.md`
+and `good-practices.md`).
 Every `.md` file in the folder is discovered recursively: don't drop
 documentation files there, they would be loaded as rules.
 
