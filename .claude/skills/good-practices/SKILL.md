@@ -1,84 +1,82 @@
 ---
 name: good-practices
 description: >
-  Garde-fous comportementaux pour réduire les erreurs classiques de LLM en
-  codant : sur-ingénierie, modifications collatérales, hypothèses tues,
-  critères de succès flous. Utilise cette skill quand tu écris, revois ou
-  refactorises du code non trivial, et en particulier avant de te lancer
-  sur une tâche dont le périmètre n'est pas encore net.
+  Behavioral guardrails to reduce the classic mistakes of LLMs that
+  code: over-engineering, collateral changes, unstated assumptions,
+  fuzzy success criteria. Use this skill when you write, review, or
+  refactor non-trivial code, and in particular before starting on a
+  task whose scope isn't yet clear.
 license: MIT
 ---
 
 # Good practices
 
-Garde-fous sur les erreurs récurrentes des LLM qui codent.
+Guardrails against the recurring mistakes of LLMs that code.
 
-**Compromis assumé :** ces règles privilégient la prudence sur la vitesse.
-Pour une tâche triviale, garde ton jugement.
+**Acknowledged trade-off:** these rules favor caution over speed. For a
+trivial task, use your judgment.
 
-## 1. Réfléchir avant de coder
+## 1. Think before coding
 
-**Ne pas supposer. Ne pas masquer une confusion. Exposer les compromis.**
+**Don't assume. Don't hide confusion. Expose trade-offs.**
 
-Avant d'implémenter :
+Before implementing:
 
-- Énoncer explicitement ses hypothèses. En cas de doute, demander.
-- Si plusieurs interprétations existent, les présenter — ne pas en choisir
-  une silencieusement.
-- Si une approche plus simple existe, le dire. Objecter quand c'est justifié.
-- Si quelque chose n'est pas clair, s'arrêter. Nommer ce qui bloque. Demander.
+- State your assumptions explicitly. When in doubt, ask.
+- If several interpretations exist, present them — don't silently pick
+  one.
+- If a simpler approach exists, say so. Object when justified.
+- If something is unclear, stop. Name what blocks you. Ask.
 
-## 2. La simplicité d'abord
+## 2. Simplicity first
 
-**Le minimum de code qui résout le problème. Rien de spéculatif.**
+**The minimum code that solves the problem. Nothing speculative.**
 
-- Aucune fonctionnalité au-delà de ce qui a été demandé.
-- Aucune abstraction pour du code utilisé une seule fois.
-- Aucune « flexibilité » ou « configurabilité » non demandée.
-- Aucune gestion d'erreur pour des scénarios impossibles.
-- Si tu écris 200 lignes et que 50 suffiraient, réécris.
+- No feature beyond what was asked.
+- No abstraction for code used only once.
+- No unrequested "flexibility" or "configurability".
+- No error handling for impossible scenarios.
+- If you write 200 lines and 50 would suffice, rewrite.
 
-Le test : « un ingénieur senior dirait-il que c'est sur-compliqué ? »
-Si oui, simplifier.
+The test: "would a senior engineer say this is over-complicated?" If
+yes, simplify.
 
-## 3. Modifications chirurgicales
+## 3. Surgical changes
 
-**Ne toucher que le nécessaire. Ne nettoyer que ses propres dégâts.**
+**Touch only what's necessary. Clean up only your own mess.**
 
-En modifiant du code existant :
+When modifying existing code:
 
-- Ne pas « améliorer » le code, les commentaires ou le formatage adjacents.
-- Ne pas refactoriser ce qui n'est pas cassé.
-- Suivre le style existant, même si tu ferais autrement.
-- Si tu repères du code mort sans rapport, le signaler — ne pas le supprimer.
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor what isn't broken.
+- Follow the existing style, even if you'd do otherwise.
+- If you spot unrelated dead code, flag it — don't remove it.
 
-Quand tes changements créent des orphelins :
+When your changes create orphans:
 
-- Supprimer les imports/variables/fonctions que TES changements ont rendus
-  inutilisés.
-- Ne pas supprimer du code mort préexistant sans qu'on te le demande.
+- Remove the imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code without being asked.
 
-Le test : chaque ligne modifiée doit se rattacher directement à la demande.
+The test: every modified line must tie directly to the request.
 
-## 4. Exécution pilotée par l'objectif
+## 4. Goal-driven execution
 
-**Définir les critères de succès. Boucler jusqu'à vérification.**
+**Define success criteria. Loop until verified.**
 
-Transformer les tâches en objectifs vérifiables :
+Turn tasks into verifiable objectives:
 
-- « Ajouter de la validation » → « Écrire des tests pour les entrées
-  invalides, puis les faire passer »
-- « Corriger le bug » → « Écrire un test qui le reproduit, puis le faire
-  passer »
-- « Refactoriser X » → « Vérifier que les tests passent avant et après »
+- "Add validation" → "Write tests for invalid inputs, then make them
+  pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Verify tests pass before and after"
 
-Pour une tâche multi-étapes, énoncer un plan bref :
+For a multi-step task, state a brief plan:
 
 ```
-1. [Étape] → vérifier : [contrôle]
-2. [Étape] → vérifier : [contrôle]
-3. [Étape] → vérifier : [contrôle]
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
 ```
 
-Des critères de succès forts permettent de boucler en autonomie. Des
-critères faibles (« que ça marche ») imposent des allers-retours constants.
+Strong success criteria let you loop autonomously. Weak criteria ("just
+make it work") force constant back-and-forth.

@@ -1,18 +1,16 @@
 # Git
 
-Règle chargée à chaque session (pas de `paths`) : elle s'applique quel que
-soit le fichier touché.
+Rule loaded at every session (no `paths`): it applies regardless of
+which file is touched.
 
-- Ne jamais commiter ni pousser sans demande explicite. Terminer une tâche
-  ≠ la commiter.
-- Ne jamais commiter directement sur la branche par défaut : créer une
-  branche d'abord.
-- Pas de `push --force` ni de réécriture d'historique déjà poussé
-  (`rebase`, `commit --amend`) sans validation explicite.
-- Ne pas ajouter au commit des fichiers sans rapport avec la tâche.
-  Vérifier `git status` avant `git add`, ne pas faire `git add -A` à
-  l'aveugle.
-- Un message de commit dit **pourquoi**, pas **quoi** — le diff dit déjà
-  quoi.
-- Ne jamais commiter de secret, `.env`, dump de base ou credential. En cas
-  de doute sur un fichier, demander.
+- Never commit or push without an explicit request. Finishing a task
+  ≠ committing it.
+- Never commit directly on the default branch: create a branch first.
+- No `push --force` and no rewriting of already-pushed history (`rebase`,
+  `commit --amend`) without explicit validation.
+- Don't add files unrelated to the task to the commit. Check `git status`
+  before `git add`; don't blindly run `git add -A`.
+- A commit message says **why**, not **what** — the diff already says
+  what.
+- Never commit a secret, `.env`, database dump, or credential. If unsure
+  about a file, ask.

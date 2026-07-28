@@ -3,24 +3,24 @@ paths:
   - "**/*.{js,jsx,ts,tsx,mjs,cjs,py,go,rs,rb,java,kt,php,cs,swift,sh}"
 ---
 
-# Qualité et outillage
+# Quality and tooling
 
-Règle chargée uniquement quand un fichier source est lu ou écrit.
-Restreindre les extensions à la stack réelle du projet au bootstrap —
-garder une liste large coûte du contexte pour rien.
+Rule loaded only when a source file is read or written.
+Restrict the extensions to the project's actual stack at bootstrap —
+keeping a broad list costs context for nothing.
 
-- Lancer le formateur/linter du projet après une modification, avant de
-  conclure. Les commandes exactes sont dans la section « Commandes » de
+- Run the project's formatter/linter after a change, before
+  concluding. The exact commands are in the "Commands" section of
   `CLAUDE.md`.
-- Ne pas désactiver une règle de lint en ligne (`eslint-disable`,
-  `# noqa`, `#[allow(...)]`) sans commentaire disant pourquoi. Sans
-  justification, corriger le code plutôt que faire taire l'outil.
-- Ne pas reformater du code non lié à la tâche. Un diff qui mélange
-  reformatage et logique est irrelisable en revue.
-- Suivre le style du fichier courant même si tu ferais autrement.
-  L'incohérence coûte plus cher que le style « optimal ».
-- Ne pas laisser de code mort, d'import inutilisé ou de `console.log` /
-  `print` de debug introduits par tes propres changements. Le code mort
-  préexistant se signale, ne se supprime pas d'office.
-- Une erreur ne se rattrape que si on sait quoi en faire. Pas de
-  `catch` vide ni d'exception avalée pour « faire passer ».
+- Don't disable a lint rule inline (`eslint-disable`, `# noqa`,
+  `#[allow(...)]`) without a comment saying why. Without justification,
+  fix the code rather than silencing the tool.
+- Don't reformat code unrelated to the task. A diff mixing reformatting
+  and logic is unreadable in review.
+- Follow the current file's style even if you'd do otherwise.
+  Inconsistency costs more than "optimal" style.
+- Don't leave dead code, unused imports, or debug `console.log` /
+  `print` introduced by your own changes. Pre-existing dead code gets
+  flagged, not removed by default.
+- An error is only caught if you know what to do with it. No empty
+  `catch` and no swallowed exception to "make it pass".

@@ -1,36 +1,36 @@
-# ADR-0000 : Titre de la décision (verbe + sujet, ex: "Utiliser Postgres plutôt que Mongo")
+# ADR-0000: Decision title (verb + subject, e.g. "Use Postgres rather than Mongo")
 
-> Un ADR (Architecture Decision Record) se rédige UNE fois, au moment de la
-> décision, et n'est jamais réédité ensuite. S'il devient obsolète, on écrit
-> un nouvel ADR qui le remplace (voir section "Statut") — on ne réécrit pas
-> l'histoire.
+> An ADR (Architecture Decision Record) is written ONCE, at the time of
+> the decision, and is never re-edited afterwards. If it becomes
+> obsolete, write a new ADR that replaces it (see "Status" section) —
+> do not rewrite history.
 
-- **Date** : AAAA-MM-JJ
-- **Statut** : Proposé / Accepté / Remplacé par ADR-XXXX / Obsolète
+- **Date**: YYYY-MM-DD
+- **Status**: Proposed / Accepted / Superseded by ADR-XXXX / Obsolete
 
-## Contexte
+## Context
 
-<Quel problème fallait-il résoudre ? Quelles contraintes s'imposaient
-(techniques, business, délai, équipe) au moment de la décision ?>
+<What problem needed to be solved? What constraints applied (technical,
+business, deadline, team) at the time of the decision?>
 
-## Décision
+## Decision
 
-<Qu'est-ce qui a été choisi, en une ou deux phrases nettes.>
+<What was chosen, in one or two crisp sentences.>
 
-## Alternatives envisagées
+## Alternatives considered
 
-| Option | Pourquoi écartée |
+| Option | Why rejected |
 |---|---|
 | | |
 | | |
 
-## Conséquences
+## Consequences
 
-<Ce que ce choix implique concrètement — y compris les compromis acceptés
-sciemment. C'est la partie la plus utile pour un futur lecteur (humain ou
-agent) qui se demande "pourquoi c'est fait comme ça".>
+<What this choice concretely implies — including the trade-offs
+knowingly accepted. This is the most useful part for a future reader
+(human or agent) who wonders "why is it done this way".>
 
-## Ce qui n'a pas changé depuis
+## What has not changed since
 
-> Section à ajouter seulement si cet ADR est rouvert/vérifié plus tard —
-> sinon laisser vide. Ne jamais modifier les sections au-dessus.
+> Add this section only if this ADR is revisited/verified later —
+> otherwise leave empty. Never modify the sections above.

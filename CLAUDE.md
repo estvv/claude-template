@@ -1,67 +1,67 @@
-# <Nom du projet>
+# <Project name>
 
-<Une à deux phrases : ce que fait ce projet et pour qui. Remplacé au
-bootstrap — voir la skill `bootstrap-project`.>
+<One to two sentences: what this project does and for whom. Replaced at
+bootstrap time — see the `bootstrap-project` skill.>
 
 ## Stack
 
-<Uniquement les technos qui changent la façon d'écrire du code ici. Pas la
-liste des dépendances.>
+<Only the technologies that change how code is written here. Not the
+dependency list.>
 
-## Commandes
+## Commands
 
-| Quoi | Commande |
+| What | Command |
 |---|---|
-| Installer | `<...>` |
-| Lancer en dev | `<...>` |
-| Tester | `<...>` |
-| Tester un seul fichier | `<...>` |
-| Linter / formater | `<...>` |
+| Install | `<...>` |
+| Run in dev | `<...>` |
+| Test | `<...>` |
+| Test a single file | `<...>` |
+| Lint / format | `<...>` |
 | Build | `<...>` |
 
 ## Architecture
 
-<Le découpage non évident : ce qu'un nouveau venu ne devinerait pas en
-listant les dossiers. Ne pas décrire `src/`.>
+<The non-obvious layout: what a newcomer wouldn't guess from listing the
+folders. Don't describe `src/`.>
 
 ## Conventions
 
-<Les règles réellement appliquées dans ce repo, pas les bonnes pratiques
-génériques. Ex : « toute route API renvoie via `wrapResponse()` ».>
+<The rules actually enforced in this repo, not generic best practices.
+e.g. "every API route returns through `wrapResponse()`.">
 
-## Zones sensibles
+## Sensitive areas
 
-<Fichiers/dossiers à ne pas modifier sans validation explicite, et
-pourquoi. Laisser vide si aucune.>
+<Files/folders that should not be modified without explicit validation,
+and why. Leave empty if none.>
 
 ---
 
-# Règles de travail (fournies par le template)
+# Working rules (provided by the template)
 
-Ces règles s'appliquent à tous les projets issus de ce template. Les
-sections au-dessus sont, elles, spécifiques à ce projet.
+These rules apply to every project derived from this template. The
+sections above are specific to this project.
 
-## Budget de ce fichier
+## This file's budget
 
-Garder `CLAUDE.md` **sous 200 lignes**. Ce fichier est lu en entier à
-chaque session : tout ce qui n'est pas systématiquement utile coûte du
-contexte à chaque tour. Trois destinations selon le cas :
+Keep `CLAUDE.md` **under 200 lines**. This file is read in full at every
+session: anything not systematically useful costs context on every turn.
+Three destinations depending on the case:
 
-| Le contenu… | va dans |
+| The content… | goes in |
 |---|---|
-| s'applique à chaque session | `CLAUDE.md` |
-| ne concerne que certains fichiers | `.claude/rules/` avec `paths:` |
-| ne sert que sur demande / procédure | `.claude/skills/<nom>/SKILL.md` |
+| applies to every session | `CLAUDE.md` |
+| concerns only some files | `.claude/rules/` with `paths:` |
+| is only needed on demand / for a procedure | `.claude/skills/<name>/SKILL.md` |
 
-Les imports `@fichier.md` **ne réduisent pas** le contexte : le fichier
-importé est chargé au lancement comme le reste. Seul `paths:` dans
-`.claude/rules/` évite réellement le coût.
+`@file.md` imports **do not reduce** the context: the imported file is
+loaded at startup like everything else. Only `paths:` in
+`.claude/rules/` actually avoids the cost.
 
-## Règles path-scopées
+## Path-scoped rules
 
-`.claude/rules/*.md` porte les règles qui ne concernent qu'une partie du
-repo. Le frontmatter `paths:` les charge uniquement quand Claude lit un
-fichier correspondant :
+`.claude/rules/*.md` carries the rules that concern only part of the
+repo. The `paths:` frontmatter loads them only when Claude reads a
+matching file:
 
 ```markdown
 ---
@@ -69,40 +69,40 @@ paths: ["src/api/**/*.ts"]
 ---
 ```
 
-Une règle **sans** `paths:` est chargée à chaque session — même coût que
-`CLAUDE.md`, donc à réserver à ce qui s'applique partout (voir `git.md`).
-Tous les `.md` du dossier sont découverts récursivement : ne pas y déposer
-de fichier de documentation, il serait chargé comme une règle.
+A rule **without** `paths:` is loaded at every session — same cost as
+`CLAUDE.md`, so reserve it for what applies everywhere (see `git.md`).
+Every `.md` file in the folder is discovered recursively: don't drop
+documentation files there, they would be loaded as rules.
 
-## Décisions d'architecture
+## Architecture decisions
 
-Une décision engageante produit deux choses : le **pourquoi** dans
-`docs/adr/000N-*.md` (jamais chargé automatiquement), et, si elle
-contraint du code futur, le **quoi faire** en 1-2 lignes dans
-`.claude/rules/<zone>.md` qui cite l'ADR sans le recopier.
+An engaging decision produces two things: the **why** in
+`docs/adr/000N-*.md` (never loaded automatically), and, if it
+constrains future code, the **what to do** in 1-2 lines in
+`.claude/rules/<area>.md` that cites the ADR without copying it.
 
-**Ne jamais lire les ADR en masse** — sur un projet mûr, c'est des
-milliers de tokens pour des décisions rarement pertinentes. Pour un
-« pourquoi c'est fait comme ça » : `ls docs/adr/` (noms descriptifs),
-ouvrir le seul qui répond. Y regarder **avant** de relire du code pour
-reconstituer une intention.
+**Never read ADRs in bulk** — on a mature project, that's thousands of
+tokens for rarely relevant decisions. For a "why is it done this way":
+`ls docs/adr/` (descriptive names), open the single one that answers.
+Look there **before** re-reading code to reconstruct an intent.
 
-Un ADR ne se réédite pas : un nouvel ADR le remplace. Voir `writing-adrs`.
+An ADR is never re-edited: a new ADR replaces it. See `writing-adrs`.
 
-## Skills et sous-agents
+## Skills and subagents
 
-- Les skills vivent dans `.claude/skills/<nom>/SKILL.md`, **un seul niveau
-  de dossier**. Une skill imbriquée plus profond est silencieusement
-  ignorée par Claude Code.
-- Les skills propres à ce projet s'appellent `project-<nom>`. Celles **sans
-  préfixe** sont le socle commun à tous les projets : ne pas les modifier —
-  pour spécialiser, créer une `project-<nom>` à côté.
-- Ne pas créer de skill sur un pattern vu une seule fois. Les critères sont
-  dans `.claude/skills/bootstrap-project/references/signal-catalog.md`.
+- Skills live in `.claude/skills/<name>/SKILL.md`, **a single level of
+  folder nesting**. A skill nested deeper is silently ignored by Claude
+  Code.
+- Skills specific to this project are named `project-<name>`. Those
+  **without** a prefix are the common foundation shared by all
+  projects: don't modify them — to specialize, create a `project-<name>`
+  alongside.
+- Don't create a skill for a pattern seen only once. The criteria are in
+  `.claude/skills/bootstrap-project/references/signal-catalog.md`.
 
-## Délégation
+## Delegation
 
-- `explorer` — pour toute question qui exigerait de lire beaucoup de
-  fichiers pour une réponse courte. Préserve le contexte principal.
-- `code-reviewer` — après toute modification non triviale, avant commit.
-- `test-writer` — pour tester du code déjà stable, pas en cours de design.
+- `explorer` — for any question that would require reading many files
+  for a short answer. Preserves the main session's context.
+- `code-reviewer` — after any non-trivial change, before committing.
+- `test-writer` — to test code that is already stable, not mid-design.

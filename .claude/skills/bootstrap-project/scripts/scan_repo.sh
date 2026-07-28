@@ -1,41 +1,41 @@
 #!/usr/bin/env bash
-# Collecte déterministe de signaux sur le repo, pour éviter que Claude
-# explore à l'aveugle et gaspille du contexte. Sortie texte brute,
-# à interpréter par le skill de bootstrap.
+# Deterministic collection of signals on the repo, to prevent Claude
+# from exploring blindly and wasting context. Raw text output, to be
+# interpreted by the bootstrap skill.
 
 set -euo pipefail
 ROOT="${1:-.}"
 cd "$ROOT"
 
-echo "## Arborescence (2 niveaux, hors node_modules/.git/dist/build)"
+echo "## Tree (2 levels, excluding node_modules/.git/dist/build)"
 find . -maxdepth 2 \
   -not -path '*/node_modules*' -not -path '*/.git*' \
   -not -path '*/dist*' -not -path '*/build*' \
   | sort
 
-echo -e "\n## Fichiers manifestes détectés"
+echo -e "\n## Detected manifest files"
 for f in package.json pyproject.toml requirements.txt go.mod Cargo.toml Gemfile composer.json; do
-  [ -f "$f" ] && echo "présent: $f"
+  [ -f "$f" ] && echo "present: $f"
 done
 
-echo -e "\n## Compteur de fichiers par extension (top 15)"
+echo -e "\n## File count by extension (top 15)"
 find . -type f -not -path '*/node_modules*' -not -path '*/.git*' \
   | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -15
 
-echo -e "\n## CI / config détectés"
+echo -e "\n## Detected CI / config"
 for f in .github/workflows .gitlab-ci.yml .circleci Dockerfile docker-compose.yml; do
-  [ -e "$f" ] && echo "présent: $f"
+  [ -e "$f" ] && echo "present: $f"
 done
 
-echo -e "\n## Docs existantes"
+echo -e "\n## Existing docs"
 for f in README.md CONTRIBUTING.md CLAUDE.md docs; do
-  [ -e "$f" ] && echo "présent: $f"
+  [ -e "$f" ] && echo "present: $f"
 done
 
-# Titres seulement : le contenu des ADR ne doit JAMAIS être ingéré en masse
-# (des milliers de tokens pour des décisions rarement pertinentes). Le titre
-# suffit à décider lesquels valent une lecture ciblée.
-echo -e "\n## ADR existants (titres seulement — ne pas lire en masse)"
+# Titles only: the content of ADRs must NEVER be ingested in bulk
+# (thousands of tokens for rarely relevant decisions). The title is
+# enough to decide which ones warrant a targeted read.
+echo -e "\n## Existing ADRs (titles only — do not read in bulk)"
 if [ -d docs/adr ]; then
   for f in docs/adr/*.md; do
     [ -f "$f" ] || continue
@@ -43,12 +43,12 @@ if [ -d docs/adr ]; then
     echo "$f : $(head -1 "$f" | sed 's/^#\+ *//')"
   done
 else
-  echo "aucun dossier docs/adr"
+  echo "no docs/adr folder"
 fi
 
-echo -e "\n## Git log résumé (30 derniers commits)"
-git log -30 --oneline 2>/dev/null || echo "pas un repo git"
+echo -e "\n## Git log summary (last 30 commits)"
+git log -30 --oneline 2>/dev/null || echo "not a git repo"
 
-echo -e "\n## Marqueurs de dette / convention non figée (TODO, FIXME, HACK)"
+echo -e "\n## Debt / unformed-convention markers (TODO, FIXME, HACK)"
 grep -rIn --exclude-dir={node_modules,.git,dist,build} -E "TODO|FIXME|HACK" . \
-  | cut -c1-160 | head -40 || echo "aucun trouvé"
+  | cut -c1-160 | head -40 || echo "none found"

@@ -1,16 +1,16 @@
-# Réglages Claude Code locaux (machine/dev, non partagés)
+# Local Claude Code settings (machine/dev, not shared)
 .claude/settings.local.json
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Éditeurs
+# Editors
 .idea/
 .vscode/
 *.swp
 
-# Ajouter ici les artefacts de build/deps propres à la stack du projet
-# (node_modules/, dist/, .venv/, target/, ...) au moment du bootstrap.
+# Add stack-specific build/dep artifacts here (node_modules/, dist/,
+# .venv/, target/, ...) at bootstrap time.
 
 .claude/check.sh
