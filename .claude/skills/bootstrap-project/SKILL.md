@@ -16,6 +16,23 @@ Two phases, strictly separated. Phase 1 is reliable and can run alone.
 Phase 2 ONLY makes proposals — nothing is created without the user's
 explicit validation.
 
+## The rule that governs every question you ask
+
+> **Never ask what the scan can deduce. Have the deduced facts
+> confirmed. Only ask for the undeducible.**
+
+A bootstrap that asks twenty questions gets abandoned a third of the way
+through, and the repo ends up with a half-filled `CLAUDE.md` — worse than
+none. Budget: **five interactions total**, three of which are quick
+confirmations.
+
+| Deducible from the scan — never ask | Undeducible — must ask |
+|---|---|
+| sub-project list (manifests), stack of each | what each sub-project is *for* |
+| commands (`package.json` scripts, Makefile targets, CI steps) | which areas are fragile |
+| test framework, CI steps, existing docs | why a past choice was made |
+| repeated patterns, recurring "fix: forgot to…" commits | which convention is intentional vs accidental |
+
 ## Phase 1 — CLAUDE.md generation (reliable, automatable)
 
 1. Run `bash .claude/skills/bootstrap-project/scripts/scan_repo.sh` to
@@ -24,11 +41,29 @@ explicit validation.
 2. If a `CLAUDE.md` already exists: read it first and **enrich** it,
    never overwrite instructions already present. Clearly mark what was
    added.
-3. Fill the stack/commands/architecture/conventions sections from the
-   detected facts — no invention. If a fact is not deducible from the
-   scan (e.g. "why Postgres"), leave a placeholder rather than guessing.
-4. Keep the file under 200 lines (see the rule in CLAUDE.md itself)
-5. If the project already has ADRs: the scan lists only their **titles**.
+3. **Interaction 1 — confirm the deduced facts.** Present a single table
+   of what the scan found: sub-projects, stack of each, commands. Ask
+   for corrections and omissions, not for answers. One message, one
+   table.
+4. **Interaction 2 — one line per sub-project.** What each is *for*.
+   This is the only truly undeducible fact needed at this stage, and it
+   is what fills the orienting root `CLAUDE.md`. Skip in a
+   single-project repo.
+5. **Interaction 3 — validate the split.** When the scan reports several
+   sub-projects with **different stacks**, propose:
+   - a root `CLAUDE.md` that **orients**: one line per sub-project, plus
+     whatever is genuinely shared;
+   - one `<sub-project>/CLAUDE.md` per sub-project carrying its stack,
+     commands and conventions. Those load on demand when Claude reads a
+     file there, costing the other sub-projects nothing.
+   Propose it, never impose it: it creates several files. If the
+   sub-projects share one stack and one command set, a single root file
+   is the better answer — say so rather than splitting by reflex.
+6. Fill the sections from the confirmed facts — no invention. If a fact
+   is not deducible and was not confirmed, leave a placeholder rather
+   than guessing.
+7. Keep each file under 200 lines (see the rule in CLAUDE.md itself)
+8. If the project already has ADRs: the scan lists only their **titles**.
    Open only those whose title touches an area active in the current
    work — never all of them. And don't summarize them in `CLAUDE.md`:
    a decision that constrains future code becomes a **path-scoped rule**
@@ -62,28 +97,36 @@ Common mistakes to avoid:
 5. The template ships **only** `git.md`, deliberately: a generic rule on
    tests or code style encodes framework knowledge Claude already has,
    and would be dead weight in every derived project. Rules beyond
-   `git.md` are derived here, from this repo:
-   - from the scan and targeted reads — an actually enforced convention,
-     a repeated pattern, a recurring mistake in the git history;
-   - by **asking the user** what a generic scan cannot know: which areas
-     are fragile, which mistake keeps coming back in review, which rule
-     is applied without being written down anywhere.
+   `git.md` are derived here, from this repo — from the scan and
+   targeted reads: an actually enforced convention, a repeated pattern,
+   a recurring mistake in the git history.
    Never propose a rule that merely restates a language or framework
    best practice — that's a weak signal (see signal-catalog.md).
-6. Present the list sorted by score to the user — skill candidates,
-   rule candidates, subagent candidates, and refactor candidates (not
-   skills) in separate sections
-7. For each candidate validated by the user: create the file in
-   `.claude/skills/project-<name>/SKILL.md`, `.claude/rules/<topic>.md`
-   or `.claude/agents/<name>.md` depending on the type. Two constraints
-   on skills:
-   - **`project-` prefix mandatory** — it makes what is specific to the
-     repo visible in an `ls`, as opposed to the template's foundation
-     which carries none (cf. ADR-0001);
-   - **a single level of folder under `skills/`** — Claude Code only
-     discovers `.claude/skills/<name>/SKILL.md`; a skill nested deeper
-     is silently ignored.
-8. Create nothing for non-validated candidates
+6. **Interaction 4 — three questions on conventions.** Asked once for
+   the whole repo, never per sub-project:
+   - which areas must not be touched without validation?
+   - which mistake keeps coming back in review?
+   - which rule is applied without being written down anywhere?
+   These are the only ones that feed genuinely useful rules. Everything
+   else is either deduced or done without.
+7. **Interaction 5 — validate the candidates.** Present the list sorted
+   by score — skill candidates, rule candidates, subagent candidates,
+   and refactor candidates (not skills) in separate sections
+8. For each candidate validated by the user: create the file in
+   `.claude/rules/<topic>.md`, `.claude/agents/<name>.md`, or a skill
+   directory chosen as follows:
+   - the skill concerns **one sub-project** → `<sub-project>/.claude/
+     skills/<name>/SKILL.md`, no prefix. Its location says who owns it,
+     and it loads only when Claude works there;
+   - the skill concerns **the whole repo** → root
+     `.claude/skills/project-<name>/SKILL.md`. The `project-` prefix
+     distinguishes it from the template's foundation, which carries none.
+   In both cases: **a single level of folder under `skills/`** — Claude
+   Code only discovers `<dir>/.claude/skills/<name>/SKILL.md`; a skill
+   nested deeper is silently ignored. A root skill that only applies to
+   certain files carries a `paths:` frontmatter, so it stays out of the
+   list Claude picks from until it is relevant.
+9. Create nothing for non-validated candidates
 
 ## What this skill never does
 

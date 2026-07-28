@@ -30,7 +30,7 @@ description: >
 
 ## Workflow
 
-1. Check the next number in `docs/adr/` (`000N-`)
+1. Check the next number in the root `docs/adr/` (`000N-`)
 2. Copy `docs/adr/0000-template.md` to `docs/adr/000N-short-title.md`
 3. Fill only Context / Decision / Alternatives / Consequences — don't
    leave a section empty, mark "not applicable" if needed
@@ -40,6 +40,13 @@ description: >
    worded ADR lingering in the repo is worse than no ADR
 6. Once the ADR is created, apply the step below: an ADR alone is an
    archive that no one will re-read at the right time.
+
+**All ADRs live in the root `docs/adr/`, flat**, including in a monorepo.
+Unlike `CLAUDE.md` and skills, an ADR is never loaded automatically, so
+placing it near the code it constrains buys nothing — while a single
+directory buys a single numbering, which keeps `ADR-000N` unambiguous.
+When a decision is scoped to one sub-project, say so in the **title**:
+`0007-use-webp-for-dataset-thumbnails.md`.
 
 ## Produce the constraint, not just the archive
 
@@ -62,8 +69,12 @@ paths: ["src/api/**/*.ts"]
 ```
 
 The rule carries the *what to do*, the ADR carries the *why*. An agent
-touching `src/api/` receives the constraint without opening a single
-ADR; it opens 0007 only if it needs to contest it.
+touching the area receives the constraint without opening a single ADR;
+it opens ADR-0007 only if it needs to contest it.
+
+Rules stay in the **root** `.claude/rules/`, even in a monorepo — a
+`paths:` glob already targets a sub-project without the file having to
+live there.
 
 ## What you NEVER do
 
@@ -77,3 +88,5 @@ ADR; it opens 0007 only if it needs to contest it.
 - Add an ADR index to `CLAUDE.md`: the cost loaded at every session
   must stay constant regardless of the number of ADRs. `ls docs/adr/`
   is enough when the question arises.
+- Create a `docs/adr/` outside the repo root, or sub-folders inside it.
+  One flat directory keeps numbering unambiguous; scope goes in titles.

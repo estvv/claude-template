@@ -12,5 +12,3 @@ Thumbs.db
 
 # Add stack-specific build/dep artifacts here (node_modules/, dist/,
 # .venv/, target/, ...) at bootstrap time.
-
-.claude/check.sh

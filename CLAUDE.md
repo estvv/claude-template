@@ -3,10 +3,24 @@
 <One to two sentences: what this project does and for whom. Replaced at
 bootstrap time — see the `bootstrap-project` skill.>
 
+## Sub-projects
+
+<Delete this section in a single-project repo.>
+
+<In a monorepo, this file's job is to **orient**, not to describe every
+stack. One line per sub-project: what it is, and where its commands run.
+Stack, commands and conventions of a sub-project belong in its own
+`<sub-project>/CLAUDE.md`, which loads on demand when Claude reads a file
+there — not in this file, which is paid for at every session.>
+
+| Sub-project | What it is |
+|---|---|
+| `<dir>/` | `<one line>` |
+
 ## Stack
 
 <Only the technologies that change how code is written here. Not the
-dependency list.>
+dependency list. In a monorepo: only what is shared across sub-projects.>
 
 ## Commands
 
@@ -81,6 +95,12 @@ An engaging decision produces two things: the **why** in
 constrains future code, the **what to do** in 1-2 lines in
 `.claude/rules/<area>.md` that cites the ADR without copying it.
 
+**All ADRs live in the root `docs/adr/`, flat** — including in a
+monorepo. We colocate what loads lazily (`CLAUDE.md`, skills) and
+centralize what never loads. One directory means one numbering, so
+`ADR-000N` stays unambiguous; a decision scoped to one sub-project says
+so in its title.
+
 **Never read ADRs in bulk** — on a mature project, that's thousands of
 tokens for rarely relevant decisions. For a "why is it done this way":
 `ls docs/adr/` (descriptive names), open the single one that answers.
@@ -93,10 +113,19 @@ An ADR is never re-edited: a new ADR replaces it. See `writing-adrs`.
 - Skills live in `.claude/skills/<name>/SKILL.md`, **a single level of
   folder nesting**. A skill nested deeper is silently ignored by Claude
   Code.
-- Skills specific to this project are named `project-<name>`. Those
-  **without** a prefix are the common foundation shared by all
-  projects: don't modify them — to specialize, create a `project-<name>`
-  alongside.
+- In the **root** `.claude/skills/`, skills specific to this repo are
+  named `project-<name>`. Those **without** a prefix are the common
+  foundation shared by all projects: don't modify them — to specialize,
+  create a `project-<name>` alongside.
+- A skill that only concerns one sub-project goes in
+  `<sub-project>/.claude/skills/<name>/` instead, with no prefix: its
+  location already says which project owns it, and it loads only when
+  Claude works in that sub-project.
+- A root skill that only applies to certain files should carry a
+  `paths:` frontmatter rather than rely on its description. Claude picks
+  a skill by reading every discovered skill's description, and
+  descriptions get **truncated when there are many** — `paths:` keeps the
+  skill out of that list until it is relevant.
 - Don't create a skill for a pattern seen only once. The criteria are in
   `.claude/skills/bootstrap-project/references/signal-catalog.md`.
 

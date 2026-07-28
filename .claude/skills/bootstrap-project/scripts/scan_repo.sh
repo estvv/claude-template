@@ -13,10 +13,28 @@ find . -maxdepth 2 \
   -not -path '*/dist*' -not -path '*/build*' \
   | sort
 
-echo -e "\n## Detected manifest files"
-for f in package.json pyproject.toml requirements.txt go.mod Cargo.toml Gemfile composer.json; do
+MANIFESTS="package.json pyproject.toml requirements.txt go.mod Cargo.toml Gemfile composer.json"
+
+echo -e "\n## Detected manifest files (root)"
+for f in $MANIFESTS; do
   [ -f "$f" ] && echo "present: $f"
 done
+
+# A manifest below the root means a sub-project. This drives whether the
+# bootstrap writes one root CLAUDE.md or one per sub-project.
+echo -e "\n## Sub-projects (manifests below the root)"
+found_sub=0
+for m in $MANIFESTS; do
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    echo "$(dirname "$f") : $m"
+    found_sub=1
+  done < <(find . -mindepth 2 -maxdepth 3 -name "$m" \
+    -not -path '*/node_modules/*' -not -path '*/.git/*' \
+    -not -path '*/dist/*' -not -path '*/build/*' \
+    -not -path '*/.venv/*' -not -path '*/vendor/*' 2>/dev/null | sort)
+done
+[ "$found_sub" -eq 0 ] && echo "none — single-project repo"
 
 echo -e "\n## File count by extension (top 15)"
 find . -type f -not -path '*/node_modules*' -not -path '*/.git*' \
