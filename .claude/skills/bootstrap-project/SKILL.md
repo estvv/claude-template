@@ -31,6 +31,12 @@ validation explicite de l'utilisateur.
    du scan (ex: "pourquoi Postgres"), laisser un placeholder plutôt que
    de deviner.
 4. Garder le fichier sous 200 lignes (voir règle dans CLAUDE.md lui-même)
+5. Si le projet a déjà des ADR : le scan n'en liste que les **titres**.
+   N'ouvrir que ceux dont le titre touche une zone active du travail en
+   cours — jamais tous. Et ne pas les résumer dans `CLAUDE.md` : la
+   décision qui contraint du code futur devient une **règle path-scopée**
+   qui cite l'ADR (voir la skill `writing-adrs`), pas un paragraphe payé à
+   chaque session.
 
 Erreurs à éviter (fréquentes) :
 - Lister toutes les dépendances au lieu des seules qui influencent la

@@ -52,6 +52,18 @@ Test rapide : « faut-il y penser à chaque fois qu'on touche ces
 fichiers ? » → règle. « Est-ce qu'on lance ça de temps en temps ? » →
 skill.
 
+### Quand un candidat-règle appelle aussi un ADR
+
+Si la convention détectée repose sur un arbitrage non évident (« pourquoi
+ce format plutôt qu'un autre ? »), proposer la **paire** : la règle
+path-scopée qui dit quoi faire, et un ADR qui dit pourquoi. La règle cite
+l'ADR sans le recopier.
+
+Ne pas inventer le « pourquoi » : si la raison n'est pas déductible du code
+ou de l'historique git, proposer la règle seule et signaler que l'ADR
+demande une réponse de l'utilisateur. Un ADR au motif inventé est pire
+qu'un ADR absent — il fige une justification fausse.
+
 ## Grille de scoring pour classer les candidats
 
 Pour chaque candidat, estimer sur 1-3 :

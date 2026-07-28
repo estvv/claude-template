@@ -32,6 +32,20 @@ for f in README.md CONTRIBUTING.md CLAUDE.md docs; do
   [ -e "$f" ] && echo "présent: $f"
 done
 
+# Titres seulement : le contenu des ADR ne doit JAMAIS être ingéré en masse
+# (des milliers de tokens pour des décisions rarement pertinentes). Le titre
+# suffit à décider lesquels valent une lecture ciblée.
+echo -e "\n## ADR existants (titres seulement — ne pas lire en masse)"
+if [ -d docs/adr ]; then
+  for f in docs/adr/*.md; do
+    [ -f "$f" ] || continue
+    case "$f" in *0000-template.md) continue;; esac
+    echo "$f : $(head -1 "$f" | sed 's/^#\+ *//')"
+  done
+else
+  echo "aucun dossier docs/adr"
+fi
+
 echo -e "\n## Git log résumé (30 derniers commits)"
 git log -30 --oneline 2>/dev/null || echo "pas un repo git"
 

@@ -74,30 +74,20 @@ Une règle **sans** `paths:` est chargée à chaque session — même coût que
 Tous les `.md` du dossier sont découverts récursivement : ne pas y déposer
 de fichier de documentation, il serait chargé comme une règle.
 
-## Décisions d'architecture : archive et contrainte
+## Décisions d'architecture
 
-Une décision engageante produit **deux choses distinctes**, jamais une
-seule :
+Une décision engageante produit deux choses : le **pourquoi** dans
+`docs/adr/000N-*.md` (jamais chargé automatiquement), et, si elle
+contraint du code futur, le **quoi faire** en 1-2 lignes dans
+`.claude/rules/<zone>.md` qui cite l'ADR sans le recopier.
 
-| | Contenu | Où | Chargement |
-|---|---|---|---|
-| Archive | pourquoi, alternatives écartées, conséquences | `docs/adr/000N-*.md` | jamais automatique |
-| Contrainte | ce qu'il faut faire, 1-2 lignes | `.claude/rules/<zone>.md` | si la zone est touchée |
+**Ne jamais lire les ADR en masse** — sur un projet mûr, c'est des
+milliers de tokens pour des décisions rarement pertinentes. Pour un
+« pourquoi c'est fait comme ça » : `ls docs/adr/` (noms descriptifs),
+ouvrir le seul qui répond. Y regarder **avant** de relire du code pour
+reconstituer une intention.
 
-La contrainte référence l'ADR (« …, cf. ADR-0007 ») sans en recopier le
-contenu. Dupliquer les fait diverger et fait payer l'archive à chaque
-session.
-
-**Ne jamais lire les ADR en masse.** Ils ne sont pas chargés
-automatiquement, et c'est voulu : sur un projet mûr ils pèsent des
-milliers de tokens pour des décisions rarement pertinentes. Pour répondre
-à un « pourquoi c'est fait comme ça », faire `ls docs/adr/` — les noms de
-fichiers sont descriptifs — et n'ouvrir que celui qui répond à la
-question. Y regarder **avant** de relire du code pour reconstituer une
-intention.
-
-Un ADR s'écrit une fois et ne se réédite pas : s'il devient obsolète, un
-nouvel ADR le remplace. Voir la skill `writing-adrs`.
+Un ADR ne se réédite pas : un nouvel ADR le remplace. Voir `writing-adrs`.
 
 ## Skills et sous-agents
 

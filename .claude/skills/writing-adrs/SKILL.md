@@ -40,6 +40,32 @@ description: >
    "Accepté" si elle l'est
 5. **Confirmer avec l'utilisateur avant de créer le fichier** — un ADR mal
    formulé qui traîne dans le repo est pire qu'un ADR absent
+6. Une fois l'ADR créé, appliquer l'étape ci-dessous : un ADR seul est une
+   archive que personne ne relira au bon moment.
+
+## Produire la contrainte, pas seulement l'archive
+
+Un ADR répond à « pourquoi ». Il n'est jamais chargé automatiquement — donc
+un agent qui écrira du code dans six mois ne le verra pas. Si la décision
+**contraint du code futur sur une zone identifiable du repo**, elle doit
+aussi produire une ligne active :
+
+1. Identifier la zone concernée (`src/api/`, les migrations, le front…).
+   Si la décision ne contraint aucune zone précise (choix d'outillage,
+   décision organisationnelle), s'arrêter là : l'ADR suffit.
+2. Créer ou compléter `.claude/rules/<zone>.md` avec un `paths:` ciblé.
+3. Y écrire **une ou deux lignes impératives** qui référencent l'ADR :
+
+```markdown
+---
+paths: ["src/api/**/*.ts"]
+---
+- Toute réponse d'endpoint passe par `wrapResponse()`, cf. ADR-0007.
+```
+
+La règle porte le *quoi faire*, l'ADR porte le *pourquoi*. Un agent qui
+touche `src/api/` reçoit la contrainte sans ouvrir un seul ADR ; il n'ouvre
+le 0007 que s'il doit la contester.
 
 ## Ce que tu ne fais JAMAIS
 
@@ -47,3 +73,9 @@ description: >
 - Rééditer un ADR existant au lieu d'en créer un nouveau qui le remplace
 - Remplir une section par une supposition — demander plutôt que d'inventer
   le "pourquoi" d'une décision passée
+- **Recopier le contenu de l'ADR dans la règle.** Les deux divergeraient, et
+  ça ferait payer l'archive à chaque session — exactement ce que la
+  séparation évite. La règle cite l'ADR, elle ne le résume pas.
+- Ajouter un index des ADR dans `CLAUDE.md` : le coût chargé à chaque
+  session doit rester constant quel que soit le nombre d'ADR. `ls docs/adr/`
+  suffit quand la question se pose.
