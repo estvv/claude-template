@@ -1,52 +1,60 @@
-# <Project name>
+# Unlocked
 
-<One to two sentences: what this project does and for whom. Replaced at
-bootstrap time — see the `bootstrap-project` skill.>
-
-## Sub-projects
-
-<Delete this section in a single-project repo.>
-
-<In a monorepo, this file's job is to **orient**, not to describe every
-stack. One line per sub-project: what it is, and where its commands run.
-Stack, commands and conventions of a sub-project belong in its own
-`<sub-project>/CLAUDE.md`, which loads on demand when Claude reads a file
-there — not in this file, which is paid for at every session.>
-
-| Sub-project | What it is |
-|---|---|
-| `<dir>/` | `<one line>` |
+Gamified achievement-tracking app: users complete real-life challenges
+validated by their community/group, earn "Karma" points (with a bonus
+for finishing first), and can wager "Tokens" on bets about who'll
+complete a challenge first. See `docs/IDEAS.md` for the full product
+brainstorm.
 
 ## Stack
 
-<Only the technologies that change how code is written here. Not the
-dependency list. In a monorepo: only what is shared across sub-projects.>
+- Next.js 16 (App Router, TypeScript, Tailwind CSS v4, Turbopack)
+- Prisma 7 + SQLite (`@prisma/adapter-better-sqlite3` driver adapter,
+  local `dev.db` file — self-hosted on a VPS, no managed DB)
+- Auth.js (`next-auth@beta`) with the Discord OAuth provider only,
+  `@auth/prisma-adapter` for session/user persistence
+- PWA (no native app, no app stores — see `docs/FEATURES.md` §Mobile):
+  `src/app/manifest.ts`, `public/sw.js`, iOS meta tags in
+  `src/app/layout.tsx`
 
 ## Commands
 
 | What | Command |
 |---|---|
-| Install | `<...>` |
-| Run in dev | `<...>` |
-| Test | `<...>` |
-| Test a single file | `<...>` |
-| Lint / format | `<...>` |
-| Build | `<...>` |
+| Install | `npm install` |
+| Run in dev | `npm run dev` |
+| Lint | `npm run lint` |
+| Build | `npm run build` |
+| DB migration (dev) | `npx prisma migrate dev` |
+| DB browser | `npx prisma studio` |
+| Regenerate Prisma client | `npx prisma generate` (needed after every `schema.prisma` change) |
+
+No test runner is set up yet.
 
 ## Architecture
 
-<The non-obvious layout: what a newcomer wouldn't guess from listing the
-folders. Don't describe `src/`.>
+- `prisma/schema.prisma` — data model. Currently only the Auth.js
+  adapter models (`User`, `Account`, `Session`, `VerificationToken`);
+  product models (achievements, groups, bets…) still to be designed.
+- `src/generated/prisma/` — Prisma client output, **generated, not
+  edited by hand**, gitignored.
+- `src/lib/prisma.ts` — Prisma client singleton (dev hot-reload safe).
+- `src/auth.ts` + `src/app/api/auth/[...nextauth]/route.ts` — Auth.js
+  config and route handler. `signIn`/`signOut`/`auth` are exported from
+  `src/auth.ts` for use in server components/actions.
+- Prisma 7 requires a driver adapter (`new PrismaClient()` with no
+  args no longer works) — see `src/lib/prisma.ts` for the SQLite one.
 
 ## Conventions
 
-<The rules actually enforced in this repo, not generic best practices.
-e.g. "every API route returns through `wrapResponse()`.">
+<Not enough code yet to have established conventions — revisit once
+the first feature lands.>
 
 ## Sensitive areas
 
-<Files/folders that should not be modified without explicit validation,
-and why. Leave empty if none.>
+- `.env` / `.env.local` — holds `AUTH_SECRET` and Discord OAuth
+  credentials, gitignored. Never commit real secrets; `.env.example`
+  documents the required keys with placeholders.
 
 ---
 
