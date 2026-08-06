@@ -11,18 +11,11 @@ brainstorm.
 - Next.js 16 (App Router, TypeScript, Tailwind CSS v4, Turbopack)
 - Prisma 7 + SQLite (`@prisma/adapter-better-sqlite3` driver adapter,
   local `dev.db` file — self-hosted on a VPS, no managed DB)
-- Auth.js (`next-auth@beta`): Credentials (username/password) is the
-  primary login, Discord OAuth is optional (kept for a future webhook
-  use). JWT sessions — required for Credentials, see `src/auth.ts` —
-  so `@auth/prisma-adapter` only persists Discord's User/Account rows,
-  not sessions
-- shadcn/ui (`radix-nova` style, neutral base) + lucide icons
+- Auth.js (`next-auth@beta`) with the Discord OAuth provider only,
+  `@auth/prisma-adapter` for session/user persistence
 - PWA (no native app, no app stores — see `docs/FEATURES.md` §Mobile):
   `src/app/manifest.ts`, `public/sw.js`, iOS meta tags in
   `src/app/layout.tsx`
-
-**Node 22+ required** (`.nvmrc`) — npm 12, `node-gyp` and Prisma 7 all
-refuse Node 20, and `better-sqlite3` then builds against the wrong ABI.
 
 ## Commands
 
@@ -32,87 +25,36 @@ refuse Node 20, and `better-sqlite3` then builds against the wrong ABI.
 | Run in dev | `npm run dev` |
 | Lint | `npm run lint` |
 | Build | `npm run build` |
-| DB migration (dev) | `npm run db:migrate` |
-| DB browser | `npm run db:studio` |
-| Migrate + seed (prod) | `npm run db:deploy` (snapshots first, aborts if it can't) then `npm run db:seed` — `docker/entrypoint.sh` does both at boot |
-| Deploy | push to `main`: CD publishes the image to GHCR and restarts the VPS once CI is green (`README.md` §Deployment) |
-| Fixtures (dev, destructive) | `npm run db:fixtures` |
-| Regenerate Prisma client | `npx prisma generate` (needed after every `schema.prisma` change; `build` and `postinstall` already run it) |
-| Unit + integration tests | `npm test` |
-| Browser E2E | `npm run test:e2e` (needs `npx playwright install chromium` once) |
+| DB migration (dev) | `npx prisma migrate dev` |
+| DB browser | `npx prisma studio` |
+| Regenerate Prisma client | `npx prisma generate` (needed after every `schema.prisma` change) |
 
-This machine's `~/.npmrc` sets `ignore-scripts=true`, so `npm install`
-skips native builds and `postinstall`. Run
-`npm rebuild better-sqlite3 --ignore-scripts=false` or every query fails
-at runtime — the same trap awaits on the VPS.
+No test runner is set up yet.
 
 ## Architecture
 
-- `prisma/schema.prisma` — full domain model. SQLite has no native
-  enums, so status/mode columns are `String`; the allowed values live
-  as string unions in `src/lib/domain.ts`.
-- `src/generated/prisma/` — Prisma client output, **generated**, gitignored.
-- `src/lib/prisma.ts` — Prisma client singleton. Prisma 7 requires a
-  driver adapter (`new PrismaClient()` with no args no longer works).
+- `prisma/schema.prisma` — data model. Currently only the Auth.js
+  adapter models (`User`, `Account`, `Session`, `VerificationToken`);
+  product models (achievements, groups, bets…) still to be designed.
+- `src/generated/prisma/` — Prisma client output, **generated, not
+  edited by hand**, gitignored.
+- `src/lib/prisma.ts` — Prisma client singleton (dev hot-reload safe).
 - `src/auth.ts` + `src/app/api/auth/[...nextauth]/route.ts` — Auth.js
   config and route handler. `signIn`/`signOut`/`auth` are exported from
-  `src/auth.ts` for use in server components/actions. `trustHost: true`
-  is **required** for the self-hosted production build — without it
-  `auth()` silently returns null and every route redirects to `/login`.
-- `src/lib/constants.ts` — every tunable game rule (rank curve, vote
-  windows, starting tokens). Balance changes go here, not into actions.
-- `src/lib/tick.ts` — time-driven transitions (vote windows closing,
-  deadlines lapsing). There is **no cron**: `loadGroupContext()` runs
-  the tick lazily on group page loads.
-- `src/lib/bets.ts` — pari-mutuel settlement. Stakes are debited when
-  placed, so resolution only ever credits; the rounding remainder goes
-  to the largest stake to conserve the pot exactly.
-- `src/app/(app)/` — everything behind auth, wrapped by the shell
-  (sidebar on desktop, bottom tab bar on mobile).
-- Uploads live outside `public/` (`UPLOAD_DIR`) and are served through
-  `/api/uploads/[name]`, which requires a session.
-- `public/sw.js` caches **only** `/_next/static/*` and `/icons/*` — never
-  pages or `/api/*`, which are per-user and would outlive a logout. Bump
-  `CACHE_VERSION` on any policy change; `activate` drops every other cache,
-  so old builds don't pile up on devices. Guarded by `e2e/admin-pwa.spec.ts`.
-
-## Testing
-
-- `tests/` — Vitest. Server actions run for real against a throwaway DB built
-  from the migrations. `tests/setup.ts` mocks only the Next.js boundary:
-  `redirect()`/`notFound()` throw sentinels, `revalidatePath()` is a no-op,
-  `auth()` returns whoever `actAs()` picked.
-- `e2e/` — Playwright against a production build and its own DB. Discord OAuth
-  can't run headlessly, so `e2e/fixtures.ts` sets an `authjs.session-token`
-  cookie encoded offline in `e2e/seed.ts` (same `AUTH_SECRET`, see
-  `e2e/env.ts`). Seeded ids are fixed, so `reseed()` can restore
-  state in `beforeAll` — the E2E DB is **not** reset between tests, and spec
-  files leak into each other without it.
-- Both suites run serially on one shared SQLite file each.
+  `src/auth.ts` for use in server components/actions.
+- Prisma 7 requires a driver adapter (`new PrismaClient()` with no
+  args no longer works) — see `src/lib/prisma.ts` for the SQLite one.
 
 ## Conventions
 
-- Mutations are **server actions** colocated in `actions.ts` next to
-  the routes that use them, not REST route handlers.
-- Forms that can fail use `useActionState` with an
-  `ActionState = { error: string } | null`; actions return the error
-  rather than throwing.
-- Identifiers and comments in English, user-facing strings in French.
-- Design tokens are the CSS custom properties in `globals.css`
-  (`--bg-card`, …); shadcn's variables are rebound onto them. Restyle
-  there, not with raw Tailwind colours.
-- `requireMembership()` / `loadGroupContext()` gate every group route;
-  non-members get a 404, never a 403. **Platform admins are not
-  exempt** — their global moderation lives at `/admin/moderation`,
-  behind `requireAdmin()`, so group pages stay members-only.
+<Not enough code yet to have established conventions — revisit once
+the first feature lands.>
 
 ## Sensitive areas
 
 - `.env` / `.env.local` — holds `AUTH_SECRET` and Discord OAuth
   credentials, gitignored. Never commit real secrets; `.env.example`
   documents the required keys with placeholders.
-- `prisma/fixtures.ts` — **destructive**, wipes the domain tables.
-  Dev only; it refuses to run with `NODE_ENV=production`.
 
 ---
 
