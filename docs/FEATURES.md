@@ -42,18 +42,21 @@ admin plateforme n'est pas forcément owner/membre d'un groupe donné).
 
 ### Qui peut créer un achievement, et estimation des points
 
-Trois sources possibles :
-- **Template plateforme** : bibliothèque maintenue par les admins
-  plateforme, réutilisable dans n'importe quel groupe.
-- **Créé directement par le owner du groupe**, pour son groupe
-  uniquement.
-- **Créé par un membre normal du groupe**.
+C'est le **rôle du créateur** qui détermine si les points sont fixés
+d'office ou soumis au vote :
 
-Pour les deux premiers cas (admin/owner), les points sont **fixés
-directement à la création, pas de vote**. Pour un achievement créé
-par un membre normal, la valeur en points passe par un **vote
-communautaire d'estimation** (fenêtre à durée fixe, ex: 48h, avant
-clôture automatique).
+- **Owner du groupe ou admin plateforme** → points **fixés
+  directement à la création, pas de vote**.
+- **Membre normal** → la valeur en points passe par un **vote
+  communautaire d'estimation** (fenêtre à durée fixe, ex: 48h, avant
+  clôture automatique).
+
+Les **templates plateforme** (bibliothèque maintenue par les admins,
+réutilisable dans n'importe quel groupe) ne sont qu'un
+pré-remplissage du formulaire : partir d'un template ne permet pas
+d'échapper au vote si on est un membre normal, sinon n'importe qui
+pourrait contourner l'estimation. Le template d'origine est conservé
+sur l'achievement à titre de provenance.
 
 ### Deux modes d'achievement
 
@@ -73,9 +76,10 @@ Mécanisme commun aux deux modes (pour le mode Personnel, seule la
 personne ciblée peut soumettre) :
 
 - **Soumission ("Je l'ai fait")** : action dédiée, distincte des
-  messages du fil, avec preuve obligatoire (photo/vidéo/screen).
-  C'est cette soumission qui déclenche le vote de validation
-  communautaire — pas un simple message avec image posté dans le fil.
+  messages du fil, avec preuve obligatoire — photo, vidéo, **audio**
+  ou capture d'écran. C'est cette soumission qui déclenche le vote de
+  validation communautaire — pas un simple message avec image posté
+  dans le fil.
 - **Validation** : vote communautaire (fenêtre à durée fixe
   également), majorité calculée sur les votants (pas sur l'effectif
   total du groupe). Trois issues possibles :
@@ -87,6 +91,12 @@ personne ciblée peut soumettre) :
     comme une tentative faite, l'auteur peut retenter avant le délai.
   - *(mode Personnel uniquement)* si le délai passe sans soumission
     validée → résultat "Non" par défaut.
+
+Une preuve soumise juste avant le délai garde sa fenêtre de vote
+complète : l'achievement passe en terminé à l'échéance, mais le pari
+associé reste ouvert tant que cette preuve est en cours de
+dépouillement (sinon le pari paierait un échec sur un défi sur le
+point d'être validé).
 - Note personnelle ajoutable par l'auteur de la réalisation.
 
 - **Fil de discussion par achievement** : messages texte, avec
@@ -157,20 +167,29 @@ parier des Tokens.
 
 ## Modération
 
-- Un achievement, un message du fil, ou une image peut être supprimé
-  par : son auteur, le owner du groupe concerné, ou un admin
-  plateforme (modération globale).
+- Dans un groupe : un achievement ou un message peut être supprimé par
+  son auteur ou par le owner du groupe.
+- Les pages d'un groupe restent **strictement réservées à ses
+  membres** — un admin plateforme n'y accède pas plus qu'un autre.
+  Sa modération globale passe donc par un **écran dédié**
+  (`/admin/moderation`) qui liste les contenus récents de tous les
+  groupes, y compris ceux dont il n'est pas membre.
 
 ## Panel Administrateur (plateforme)
 
-- Gestion (CRUD) des catégories fixes d'achievements.
+- Gestion des catégories fixes d'achievements (créer, renommer,
+  supprimer si inutilisée). Le slug n'est jamais régénéré : c'est lui
+  qui sert aux URLs de filtre du classement.
+- Gestion des modèles d'achievement (créer, modifier, supprimer). Les
+  achievements déjà créés depuis un modèle gardent leurs valeurs.
 - Modération globale (voir ci-dessus).
 - Autres capacités à définir plus tard (gestion users/groupes...).
 
 ## Notifications
 
-- Rappel d'inactivité : notifier un membre sans achievement réalisé
-  depuis 1 mois.
+- Rappel d'inactivité : un membre sans achievement validé depuis 30
+  jours est signalé dans le fil d'activité du groupe (et donc dans le
+  log Discord). Ne se répète pas plus d'une fois par période.
 - Autres notifications à définir (nouvel achievement créé, pari
   résolu, validation en attente...).
 - Canaux hors app (email/push) : non tranché, in-app + log Discord

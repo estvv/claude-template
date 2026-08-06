@@ -57,3 +57,13 @@ Thumbs.db
 *.db-journal
 
 /src/generated/prisma
+
+# test artefacts
+/prisma/test.db
+/prisma/e2e.db
+/tests/.uploads
+/e2e/.uploads
+/e2e/.world.json
+/test-results
+/playwright-report
+backups/

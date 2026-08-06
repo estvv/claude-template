@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # `npm ci` triggers `prisma generate`, and `prisma.config.ts` reads the
+  # datasource URL at load time. Both suites override it with their own
+  # throwaway database, so nothing is ever written here.
+  DATABASE_URL: file:./ci.db
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  check:
+    name: lint · types · unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Only chromium: the suite's two projects are both Chrome-based devices.
+      - run: npx playwright install --with-deps chromium
+      # Playwright's globalSetup builds the app and migrates its own database.
+      - run: npm run test:e2e
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
+
+  image:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      # Build only — publishing is the CD workflow's job. This catches a broken
+      # Dockerfile on the pull request rather than after the merge.
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
